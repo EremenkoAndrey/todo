@@ -1,15 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
-function App() {
-    return (
-        <h1 className="text-3xl font-bold underline">
-            Hello world!
-        </h1>
-    );
+import { App } from './src/App';
+import './index.css';
+
+let rootElement = window.document.getElementById('root');
+if (!rootElement) {
+    rootElement = window.document.createElement('div');
+    window.document.appendChild(rootElement);
 }
-
-ReactDOM.render(
-    <App />,
-    window.document.getElementById('root')
-);
+createRoot(rootElement).render(<App />);

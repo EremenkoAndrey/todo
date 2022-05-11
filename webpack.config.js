@@ -41,22 +41,6 @@ module.exports = (env, argv) => {
                             options: {
                                 importLoaders: 1
                             }
-                        }
-                    ]
-                },
-                // CSS modules
-                {
-                    test: /\.module\.less$/,
-                    use: [
-                        'style-loader',
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                importLoaders: 1,
-                                modules: {
-                                    localIdentName: "[name]__[local]--[hash:base64:5]"
-                                }
-                            }
                         },
                         {
                             loader: 'postcss-loader'
