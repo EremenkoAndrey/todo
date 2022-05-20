@@ -59,6 +59,6 @@
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "exclude": [
-    "node_modules", "webpack.config.js"
+    "node_modules", "webpack.config.js", "src/_todo"
   ]
 }

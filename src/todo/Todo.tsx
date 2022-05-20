@@ -1,36 +1,40 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 
-import { TodoItem } from './TodoItem';
-import { useTodoStore } from './use-todo-store';
-import { ButtonStyled } from './styles';
+import { Button } from '../core/shared';
+
 import { ADD } from './dictionary';
 
-export function TodoComponent() {
-    const todoStore = useTodoStore();
+type Props = {
+    title: string;
+}
 
-    const addTodo = () => todoStore.addTodo();
+export function TodoComponent(props: Props) {
+    // const todoStore = useTodoStore();
 
+    // const addTodo = () => todoStore.addTodo();
+    console.log('props.title', props.title);
     return (
         <div className="max-w-xs">
-            <ul className="divide-y-2">
-                {todoStore.itemStores.map(todoItemStore => (
-                    <li className="py-1" key={todoItemStore.id}>
-                        <TodoItem
-                            content={todoItemStore.text}
-                            onClick={() => todoItemStore.setContentEditable(true)}
-                            onBlur={() => todoItemStore.setContentEditable(false)}
-                            onTextChange={(text: string) => todoItemStore.setText(text)}
-                            contentEditable={todoItemStore.contentEditable}
-                        />
-                    </li>
-                ))}
-            </ul>
+            {props.title}
+            {/*<ul className="divide-y-2">*/}
+            {/*    {todoStore.itemStores.map(todoItemStore => (*/}
+            {/*        <li className="py-1" key={todoItemStore.id}>*/}
+            {/*            <TodoItem*/}
+            {/*                content={todoItemStore.text}*/}
+            {/*                onClick={() => todoItemStore.setContentEditable(true)}*/}
+            {/*                onBlur={() => todoItemStore.setContentEditable(false)}*/}
+            {/*                onTextChange={(text: string) => todoItemStore.setText(text)}*/}
+            {/*                contentEditable={todoItemStore.contentEditable}*/}
+            {/*            />*/}
+            {/*        </li>*/}
+            {/*    ))}*/}
+            {/*</ul>*/}
             <div className="flex justify-center py-2">
-                <ButtonStyled onClick={addTodo}>{ADD}</ButtonStyled>
+                <Button onClick={() => undefined}>{ADD}</Button>
             </div>
         </div>
     );
 }
 
-export const Todo: React.FC<Record<string, never>> = observer(TodoComponent);
+export const Todo: React.FC<Props> = observer(TodoComponent);

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Todo } from './todo';
+import { Todos } from './todos';
 
 export function App() {
     return (
         <div className="container mx-auto py-4">
-            <Todo />
+            <Todos />
         </div>
     );
 }
