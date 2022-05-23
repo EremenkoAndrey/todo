@@ -1,4 +1,4 @@
-import { ITodo, TodoEntity } from './types';
+import { ITodo, ITodoEntity } from './types';
 
 export class TodoDto implements ITodo {
     public readonly id: string;
@@ -7,11 +7,11 @@ export class TodoDto implements ITodo {
 
     public readonly date: Date;
 
-    public static create(todo: TodoEntity) {
+    public static create(entity: ITodoEntity) {
         return new TodoDto({
-            id: `${todo.id}`,
-            title: todo.title,
-            date: new Date(todo.timestamp)
+            id: `${entity.id}`,
+            title: entity.title,
+            date: new Date(entity.timestamp)
         });
     }
 

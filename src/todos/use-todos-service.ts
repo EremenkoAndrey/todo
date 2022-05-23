@@ -1,15 +1,15 @@
-import { useTodoDbService } from './use-todo-db-service';
+import { useIndexedDbService } from '../core/indexed-db';
 
 import { TodosService } from './todos.service';
 
 let todosService: TodosService;
 
 export function useTodosService() {
-    const remoteApi = useTodoDbService();
+    const externalApi = useIndexedDbService();
 
     if (!todosService) {
         todosService = new TodosService(
-            remoteApi
+            externalApi
         );
     }
 

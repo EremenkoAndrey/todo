@@ -1,35 +1,28 @@
 import { TodoDto } from './todo.dto';
 import { ONE_DAY_IN_MILLISECOND } from './constants';
 
-import { TodoEntity, TodoSource } from './types';
+import { ITodoEntity, TodoSource } from './types';
 
-interface Todo {
-    id?: number;
-    title: string;
-    timestamp: number;
-}
-interface IRemoteApi {
-    getTodos(timestamp: number, limit?: number): Promise<Todo[]>;
-    addTodos(items: TodoEntity[]): Promise<number[]>;
-    clear(): Promise<void>;
+interface IExternalApi {
+    getTodoList(timestamp: number, limit?: number): Promise<ITodoEntity[]>;
+    addTodoList(items: ITodoEntity[]): Promise<number[]>;
 }
 
 export class TodosService {
-    constructor(private _remoteApi: IRemoteApi) {}
+    constructor(private _externalApi: IExternalApi) {}
 
     public async getInitialTodos() {
-        const todos = await this._remoteApi.getTodos(Date.now() - ONE_DAY_IN_MILLISECOND, 3);
-        console.log('todos', todos);
-        return todos.map(todoEntity => TodoDto.create(todoEntity));
+        const todoLists = await this._externalApi.getTodoList(Date.now() - ONE_DAY_IN_MILLISECOND, 3);
+        return todoLists.map(todoListEntity => TodoDto.create(todoListEntity));
     }
 
-    public async addTodos(items: TodoSource[]) {
+    public async addTodoList(items: TodoSource[]) {
         const entities = items.map(todo => ({
             title: todo.title,
             timestamp: todo.date.valueOf()
         }));
-        const todos = await this._remoteApi.addTodos(entities);
-        return todos.map((id, index) => {
+        const ids = await this._externalApi.addTodoList(entities);
+        return ids.map((id, index) => {
             const entity = entities[index];
             if (!entity) {
                 throw new Error('TodoEntity not found');

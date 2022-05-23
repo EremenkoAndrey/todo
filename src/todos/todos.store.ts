@@ -6,7 +6,7 @@ import { ITodo, TodoSource } from './types';
 
 interface ITodosService {
     getInitialTodos(): Promise<ITodo[]>;
-    addTodos(sources: TodoSource[]): Promise<ITodo[]>;
+    addTodoList(sources: TodoSource[]): Promise<ITodo[]>;
 }
 
 export class TodosStore {
@@ -18,18 +18,16 @@ export class TodosStore {
 
     public async initialize() {
         this.todos = await this._todosService.getInitialTodos();
-        console.log('initialize todos', this.todos);
         if (this.todos.length > 0) {
             return this.todos;
         }
-        const maxItemsAmount = 3;
+        const maxItemsAmount = 1;
         const newTodos: TodoSource[] = [];
         for (let i = 0; i < maxItemsAmount; i += 1) {
             const todoItem = this._createTodoSource(newTodos[i - 1]);
             newTodos.push(todoItem);
         }
-        this.todos = await this._todosService.addTodos(newTodos);
-        console.log('crated initialize todos', this.todos);
+        this.todos = await this._todosService.addTodoList(newTodos);
     }
 
     private _createTodoSource(lastItem?: TodoSource): TodoSource {

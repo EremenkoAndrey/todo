@@ -57,9 +57,13 @@ module.exports = (env, argv) => {
                 directory: path.join(__dirname, 'server-static'),
                 publicPath: '/'
             },
+            headers: {
+                'Cache-Control': 'no-store',
+            },
             compress: true,
             open: true,
             port: 3333
-        }
+        },
+        cache: false // Turned cache off because changes was not detected, and option 'hot' was not worked
     };
 };

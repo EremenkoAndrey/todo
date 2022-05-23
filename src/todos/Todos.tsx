@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react';
 
-import { Todo } from '../todo';
+import { TodoList } from '../todo-list';
 
 import { useTodosStore } from './use-todos-store';
 
@@ -13,13 +13,13 @@ export function TodosComponent() {
     }, [todosStore]);
 
     return (
-        <div>
+        <ul>
             {todosStore.todos.map(todo => (
-                <div key={todo.id}>
-                    <Todo title={todo.title} />
-                </div>
+                <li className="max-w-xs" key={todo.id}>
+                    <TodoList title={todo.title} id={todo.id} />
+                </li>
             ))}
-        </div>
+        </ul>
     );
 }
 

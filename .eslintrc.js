@@ -48,6 +48,12 @@ module.exports = {
         'react/require-default-props': ['off'],
         // setState внутри componentDidUpdate вызывать можно, только в условной конструкции
         'react/no-did-update-set-state': ['warn'],
+        // Prevent unused propType definitions
+        // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-unused-prop-types.md
+        'react/no-unused-prop-types': ['error', {
+            customValidators: [],
+            skipShapeProps: true
+        }],
         'import/no-named-as-default-member': ['off'],
         // Правила для корректного использования хуков
         'react-hooks/rules-of-hooks': 'error',
