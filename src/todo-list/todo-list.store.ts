@@ -3,7 +3,8 @@ import { makeAutoObservable } from 'mobx';
 import { ITodoItem, TodoItemSource } from './types';
 
 interface ITodoListService {
-    addTodoItem(item: TodoItemSource): Promise<ITodoItem>
+    updateTodoItem(itemId: string, changes: Partial<ITodoItem>): Promise<boolean>;
+    createTodoItem(item: TodoItemSource): Promise<ITodoItem>;
 }
 
 export class TodoListStore {
@@ -28,12 +29,18 @@ export class TodoListStore {
         });
     }
 
-    public async save(text: string, done: boolean) {
-        const todo = await this._todoListService.addTodoItem({
-            parentId: this._parentId,
-            text,
-            done
-        });
-        this.items.push(todo);
+    public async update(todoItem: ITodoItem): Promise<ITodoItem> {
+        if (todoItem.id) {
+            await this._todoListService.updateTodoItem(todoItem.id, todoItem);
+            this._replaceItem(todoItem);
+            return todoItem;
+        }
+        const newItem = await this._todoListService.createTodoItem(todoItem);
+        this._replaceItem(newItem);
+        return newItem;
+    }
+
+    private _replaceItem(todoItem: ITodoItem) {
+        this.items = this.items.map(item => (!item.id || item.id === todoItem.id) ? todoItem : item);
     }
 }

@@ -35,6 +35,11 @@ export class IndexedDbService extends Dexie {
         return this.todoItems.add(todoItem);
     }
 
+    public async updateTodoItem(id: number, changes: Partial<TodoItemEntity>) {
+        const amountOfUpdatedElements = await this.todoItems.update(id, changes);
+        return amountOfUpdatedElements !== 0;
+    }
+
     public clear() {
         return this.todoLists.clear();
     }

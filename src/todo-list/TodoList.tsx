@@ -6,6 +6,7 @@ import { Button } from '../core/shared';
 import { useTodoLitStore } from './use-todo-lit-store';
 import { ADD } from './dictionary';
 import { TodoItem } from './TodoItem';
+import { ITodoItem } from './types';
 
 type Props = {
     id: string;
@@ -16,7 +17,11 @@ export function TodoListComponent(props: Props) {
     const { id, title } = props;
     const todoLitStore = useTodoLitStore(id);
 
-    const addTodo = () => todoLitStore.add();
+    const add = () => todoLitStore.add();
+
+    const update = (todoItem: ITodoItem) => {
+        todoLitStore.update(todoItem);
+    };
 
     return (
         <div className="border-2">
@@ -24,18 +29,23 @@ export function TodoListComponent(props: Props) {
                 {title}
             </div>
 
-            {todoLitStore.items.map(todoItem => (
-                <TodoItem
-                    text={todoItem.text}
-                    contentEditable={false}
-                    onBlur={() => undefined}
-                    onClick={() => undefined}
-                    onTextChange={() => undefined}
-                />
-            ))}
+            {todoLitStore.items.map((todoItem) => {
+                console.log('todoItem.id', todoItem.id)
+                return (
+                    <TodoItem
+                        key={todoItem.id}
+                        text={todoItem.text}
+                        onContentChanged={text => update({
+                            ...todoItem,
+                            text
+                        })}
+                        className="border-b-2"
+                    />
+                )
+            })}
 
             <div className="flex justify-center py-2">
-                <Button onClick={addTodo}>{ADD}</Button>
+                <Button onClick={add}>{ADD}</Button>
             </div>
         </div>
     );
