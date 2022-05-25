@@ -1,4 +1,6 @@
-import { ITodo, ITodoEntity } from './types';
+import { TodoListEntity } from '../core/indexed-db';
+
+import { ITodo } from './types';
 
 export class TodoDto implements ITodo {
     public readonly id: string;
@@ -7,7 +9,7 @@ export class TodoDto implements ITodo {
 
     public readonly date: Date;
 
-    public static create(entity: ITodoEntity) {
+    public static create(entity: TodoListEntity) {
         return new TodoDto({
             id: `${entity.id}`,
             title: entity.title,

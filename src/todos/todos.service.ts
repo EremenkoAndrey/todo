@@ -1,11 +1,12 @@
+import { TodoListEntity } from '../core/indexed-db';
+
 import { TodoDto } from './todo.dto';
 import { ONE_DAY_IN_MILLISECOND } from './constants';
-
-import { ITodoEntity, TodoSource } from './types';
+import { TodoSource } from './types';
 
 interface IExternalApi {
-    getTodoList(timestamp: number, limit?: number): Promise<ITodoEntity[]>;
-    addTodoList(items: ITodoEntity[]): Promise<number[]>;
+    getTodoList: (timestamp: number, limit?: number) => Promise<TodoListEntity[]>;
+    addTodoLists: (todoLists: TodoListEntity[]) => Promise<number[]>;
 }
 
 export class TodosService {
@@ -21,7 +22,7 @@ export class TodosService {
             title: todo.title,
             timestamp: todo.date.valueOf()
         }));
-        const ids = await this._externalApi.addTodoList(entities);
+        const ids = await this._externalApi.addTodoLists(entities);
         return ids.map((id, index) => {
             const entity = entities[index];
             if (!entity) {

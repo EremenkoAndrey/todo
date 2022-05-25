@@ -1,6 +1,6 @@
-import Dexie, { Table } from 'dexie';
+import Dexie, { PromiseExtended, Table } from 'dexie';
 
-import { TodoItemEntity, TodoListEntity } from './entities';
+import { TodoItemEntity, TodoList, TodoListEntity } from './entities';
 
 const VERSION = 1;
 
@@ -19,16 +19,43 @@ export class IndexedDbService extends Dexie {
 
     }
 
-    public getTodoList(timestamp: number, limit = 1) {
+    public getTodoList(timestamp: number, limit = 1): PromiseExtended<TodoList[]> {
         return this.todoLists
             .where('timestamp')
             .above(timestamp)
             .limit(limit)
-            .toArray();
+            .toArray((todoList) => {
+                const todos = new Map<number, TodoList>();
+                todoList.forEach((entity) => {
+                    const id = entity.id;
+                    if (!id) {
+                        throw new Error('Incorrect entity id');
+                    }
+                    todos.set(id, {
+                        id,
+                        ...entity,
+                        items: []
+                    });
+                });
+
+                return this.todoItems
+                    .where('parentId')
+                    .anyOf(Array.from(todos.keys()))
+                    .toArray((todoItems) => {
+                        todoItems.map((todoItem) => {
+                            const parent = todos.get(todoItem.parentId);
+                            if (parent) {
+                                parent.items.push(todoItem);
+                            }
+                            return todoItem;
+                        });
+                        return Array.from(todos.values());
+                    });
+            });
     }
 
-    public addTodoList(todoList: TodoListEntity[]) {
-        return this.todoLists.bulkAdd<true>(todoList, { allKeys: true });
+    public addTodoLists(todoLists: TodoListEntity[]) {
+        return this.todoLists.bulkAdd<true>(todoLists, { allKeys: true });
     }
 
     public addTodoItem(todoItem: TodoItemEntity) {

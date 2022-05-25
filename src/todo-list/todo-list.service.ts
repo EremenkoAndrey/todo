@@ -1,4 +1,6 @@
-import { ITodoItem, TodoItemEntity, TodoItemSource } from './types';
+import { TodoItemEntity } from '../core/indexed-db';
+
+import { ITodoItem, TodoItemSource } from './types';
 import { TodoItemDto } from './todo-item.dto';
 
 interface IExternalApi {
@@ -31,7 +33,6 @@ export class TodoListService {
             id: undefined,
             parentId: changes.parentId ? Number.parseInt(changes.parentId) : undefined
         };
-        console.log('updateTodoItem', itemId, changes)
         return this._externalApi.updateTodoItem(entityId, entityChanges);
     }
 }

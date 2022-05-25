@@ -1,4 +1,6 @@
-import { ITodoItem, TodoItemEntity } from './types';
+import { TodoItemEntity } from '../core/indexed-db';
+
+import { ITodoItem } from './types';
 
 export class TodoItemDto implements ITodoItem {
     public readonly id: string;
