@@ -2,12 +2,14 @@ import { useState } from 'react';
 
 import { TodoListStore } from './todo-list.store';
 import { useTodoListService } from './use-todo-list-service';
+import { ITodoItem } from './types';
 
-export function useTodoLitStore(parentId: string) {
+export function useTodoLitStore(id: string, items: Array<ITodoItem>) {
     const todoListService = useTodoListService();
 
     const [todoListStore] = useState(() => new TodoListStore(
-        parentId,
+        id,
+        items,
         todoListService
     ));
 

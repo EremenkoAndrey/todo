@@ -1,3 +1,3 @@
 export { useIndexedDbService } from './use-indexed-db-service';
 
-export type { TodoItemEntity, TodoListEntity } from './entities';
+export type { TodoList, TodoItemEntity, TodoListEntity } from './entities';

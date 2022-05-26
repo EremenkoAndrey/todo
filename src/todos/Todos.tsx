@@ -11,12 +11,16 @@ export function TodosComponent() {
     useEffect(() => {
         todosStore.initialize();
     }, [todosStore]);
-
+    console.log('todosStore.todos', todosStore.todos);
     return (
         <ul>
             {todosStore.todos.map(todo => (
                 <li className="max-w-xs" key={todo.id}>
-                    <TodoList title={todo.title} id={todo.id} />
+                    <TodoList
+                        title={todo.title}
+                        id={todo.id}
+                        items={todo.items}
+                    />
                 </li>
             ))}
         </ul>

@@ -15,7 +15,5 @@ export interface TodoListEntity {
 export interface TodoList extends TodoListEntity {
     id: number;
     items: Array<TodoItemEntity>;
-    title: string;
-    timestamp: number;
 }
 

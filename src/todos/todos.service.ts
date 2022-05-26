@@ -1,11 +1,11 @@
-import { TodoListEntity } from '../core/indexed-db';
+import { TodoList, TodoListEntity } from '../core/indexed-db';
 
 import { TodoDto } from './todo.dto';
 import { ONE_DAY_IN_MILLISECOND } from './constants';
 import { TodoSource } from './types';
 
 interface IExternalApi {
-    getTodoList: (timestamp: number, limit?: number) => Promise<TodoListEntity[]>;
+    getTodoList: (timestamp: number, limit?: number) => Promise<TodoList[]>;
     addTodoLists: (todoLists: TodoListEntity[]) => Promise<number[]>;
 }
 
@@ -28,7 +28,11 @@ export class TodosService {
             if (!entity) {
                 throw new Error('TodoEntity not found');
             }
-            return TodoDto.create({ id, ...entity });
+            return TodoDto.create({
+                id,
+                ...entity,
+                items: []
+            });
         });
     }
 }

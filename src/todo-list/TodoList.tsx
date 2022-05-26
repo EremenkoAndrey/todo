@@ -11,11 +11,12 @@ import { ITodoItem } from './types';
 type Props = {
     id: string;
     title: string;
+    items: Array<ITodoItem>;
 }
 
 export function TodoListComponent(props: Props) {
-    const { id, title } = props;
-    const todoLitStore = useTodoLitStore(id);
+    const { id, title, items } = props;
+    const todoLitStore = useTodoLitStore(id, items);
 
     const add = () => todoLitStore.add();
 
@@ -30,7 +31,6 @@ export function TodoListComponent(props: Props) {
             </div>
 
             {todoLitStore.items.map((todoItem) => {
-                console.log('todoItem.id', todoItem.id)
                 return (
                     <TodoItem
                         key={todoItem.id}

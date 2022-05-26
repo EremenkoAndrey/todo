@@ -42,12 +42,11 @@ export class IndexedDbService extends Dexie {
                     .where('parentId')
                     .anyOf(Array.from(todos.keys()))
                     .toArray((todoItems) => {
-                        todoItems.map((todoItem) => {
+                        todoItems.forEach((todoItem) => {
                             const parent = todos.get(todoItem.parentId);
                             if (parent) {
                                 parent.items.push(todoItem);
                             }
-                            return todoItem;
                         });
                         return Array.from(todos.values());
                     });

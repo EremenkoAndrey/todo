@@ -8,22 +8,24 @@ interface ITodoListService {
 }
 
 export class TodoListStore {
-    private readonly _parentId: string;
+    private readonly _id: string;
 
-    public items: Array<ITodoItem> = [];
+    public items: Array<ITodoItem>;
 
     constructor(
-        parentId: string,
+        id: string,
+        items: Array<ITodoItem>,
         private _todoListService: ITodoListService
     ) {
-        this._parentId = parentId;
+        this._id = id;
+        this.items = items;
         makeAutoObservable(this);
     }
 
     public add() {
         this.items.push({
             id: '',
-            parentId: this._parentId,
+            parentId: this._id,
             text: '',
             done: false
         });
