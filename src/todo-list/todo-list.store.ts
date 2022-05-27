@@ -10,7 +10,7 @@ interface ITodoListService {
 export class TodoListStore {
     private readonly _id: string;
 
-    public items: Array<ITodoItem>;
+    private _items: Array<ITodoItem>;
 
     constructor(
         id: string,
@@ -18,31 +18,41 @@ export class TodoListStore {
         private _todoListService: ITodoListService
     ) {
         this._id = id;
-        this.items = items;
+        this._items = items;
         makeAutoObservable(this);
     }
 
-    public add() {
-        this.items.push({
-            id: '',
-            parentId: this._id,
-            text: '',
-            done: false
+    public get items() {
+        return [
+            ...this._items,
+            {
+                id: '',
+                parentId: this._id,
+                text: '',
+                done: false
+            }
+        ];
+    }
+
+    public async updateItem(todoItem: ITodoItem) {
+        if (todoItem.text.trim().length === 0) {
+            return;
+        }
+        await this._todoListService.updateTodoItem(todoItem.id, todoItem);
+        this._items = this._items.map((item) => {
+            if (item.id === todoItem.id) {
+                return todoItem;
+            }
+            return item;
         });
     }
 
-    public async update(todoItem: ITodoItem): Promise<ITodoItem> {
-        if (todoItem.id) {
-            await this._todoListService.updateTodoItem(todoItem.id, todoItem);
-            this._replaceItem(todoItem);
-            return todoItem;
+    public async addItem(todoItem: ITodoItem) {
+        if (todoItem.text.trim().length === 0) {
+            return;
         }
         const newItem = await this._todoListService.createTodoItem(todoItem);
-        this._replaceItem(newItem);
+        this._items.push(newItem);
         return newItem;
-    }
-
-    private _replaceItem(todoItem: ITodoItem) {
-        this.items = this.items.map(item => (!item.id || item.id === todoItem.id) ? todoItem : item);
     }
 }

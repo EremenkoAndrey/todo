@@ -2,28 +2,47 @@ import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 
 import { TODO_ITEM_PLACEHOLDER } from './dictionary';
+import { ITodoItem } from './types';
 
 type Props = {
+    id: string;
     text: string;
-    onContentChanged: (content: string) => void;
+    done: boolean;
+    onChanged: (todoItem: Omit<ITodoItem, 'parentId'>) => void;
     className?: string;
 }
 
 export function TodoItemComponent(props: Props) {
-    const { text, className, onContentChanged } = props;
-
+    const {
+        className,
+        onChanged,
+        ...todoItem
+    } = props;
     const [contentEditable, setContentEditable] = useState(false);
+    const isBlanc = !todoItem.id;
+    const defaultTextValue = !isBlanc ? todoItem.text.trim() : '';
+    const [text, setText] = useState<string>(defaultTextValue);
+    const [done, setDone] = useState<boolean>(todoItem.done);
     const textareaRef = useRef<HTMLInputElement>(null);
-    const content = text.length > 0 ? text.trim() : TODO_ITEM_PLACEHOLDER;
-
     const startEditing = () => {
         setContentEditable(true);
     };
     const stopEditing = () => {
         setContentEditable(false);
-        if (textareaRef.current) {
-            onContentChanged(textareaRef.current.value);
-        }
+        onChanged({
+            id: todoItem.id,
+            text,
+            done
+        });
+        setText(defaultTextValue);
+    };
+    const updateTodoStatus = (status: boolean) => {
+        onChanged({
+            id: todoItem.id,
+            text,
+            done: status
+        });
+        setDone(status);
     };
 
     const onEnterKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -50,17 +69,25 @@ export function TodoItemComponent(props: Props) {
                     className="w-full px-2 py-0.5"
                     onKeyDown={onEnterKeyPress}
                     ref={textareaRef}
+                    value={text}
+                    onChange={event => setText(event.target.value)}
                 />
             ) : (
                 <>
                     <div className="flex items-center px-2">
-                        <input type="checkbox" />
+                        {!isBlanc && (
+                            <input
+                                type="checkbox"
+                                checked={done}
+                                onChange={event => updateTodoStatus(event.target.checked)}
+                            />
+                        )}
                     </div>
                     <div
                         className="flex items-center px-2 w-full"
                         onClick={startEditing}
                     >
-                        {content}
+                        {isBlanc ? TODO_ITEM_PLACEHOLDER : text}
                     </div>
                 </>
             )}
