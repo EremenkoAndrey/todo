@@ -1,9 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 
-import { useTodoLitStore } from './use-todo-lit-store';
-import { TodoItem } from './TodoItem';
-import { ITodoItem } from './types';
+import { ITodoItem, TodoItem } from '../todo-item';
+
+import { AddForm } from './AddForm';
+import { useTodoListStore } from './use-todo-list-store';
 
 type Props = {
     id: string;
@@ -13,18 +14,7 @@ type Props = {
 
 export function TodoListComponent(props: Props) {
     const { id, title, items } = props;
-    const todoLitStore = useTodoLitStore(id, items);
-
-    const addOrUpdate = (todoItem: ITodoItem) => {
-        console.log('todoItem', id, todoItem)
-        if (todoItem.id) {
-            console.log('update')
-            todoLitStore.updateItem(todoItem);
-        } else {
-            console.log('add')
-            todoLitStore.addItem(todoItem);
-        }
-    };
+    const todoLitStore = useTodoListStore(id, items);
 
     return (
         <div className="border-2">
@@ -36,17 +26,13 @@ export function TodoListComponent(props: Props) {
                 return (
                     <TodoItem
                         key={todoItem.id}
-                        id={todoItem.id}
-                        text={todoItem.text}
-                        done={todoItem.done}
-                        onChanged={(item: Omit<ITodoItem, 'parentId'>) => addOrUpdate({
-                            ...item,
-                            parentId: id
-                        })}
+                        todoItem={todoItem}
                         className="border-b-2"
                     />
                 );
             })}
+
+            <AddForm store={todoLitStore} />
         </div>
     );
 }

@@ -1,7 +1,3 @@
-export interface ITodoItem {
-    id: string;
-    parentId: string;
-    text: string;
-    done: boolean;
-}
-export type TodoItemSource = Omit<ITodoItem, 'id'>;
+import { ITodoItem } from '../todo-item';
+
+export type TodoItemBlank = Omit<ITodoItem, 'id'>;

@@ -1,4 +1,4 @@
-import { ITodoItem } from '../todo-list';
+import { ITodoItem } from '../todo-item';
 
 export interface ITodo {
     id: string,

@@ -1,5 +1,6 @@
 import { TodoList } from '../core/indexed-db';
-import { ITodoItem, TodoItemDto } from '../todo-list';
+
+import { ITodoItem, TodoItemDto } from '../todo-item';
 
 import { ITodo } from './types';
 

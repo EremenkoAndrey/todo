@@ -1,17 +1,16 @@
 import { TodoItemEntity } from '../core/indexed-db';
+import { TodoItemDto } from '../todo-item';
 
-import { ITodoItem, TodoItemSource } from './types';
-import { TodoItemDto } from './todo-item.dto';
+import { TodoItemBlank } from './types';
 
 interface IExternalApi {
     addTodoItem(item: TodoItemEntity): Promise<number>;
-    updateTodoItem(id: number, changes: Partial<TodoItemEntity>): Promise<boolean>;
 }
 
 export class TodoListService {
     constructor(private _externalApi: IExternalApi) {}
 
-    public async createTodoItem(item: TodoItemSource) {
+    public async createTodoItem(item: TodoItemBlank) {
         const parentId = Number.parseInt(item.parentId);
         const id = await this._externalApi.addTodoItem({
             parentId,
@@ -24,15 +23,5 @@ export class TodoListService {
             done: item.done,
             text: item.text
         });
-    }
-
-    public updateTodoItem(itemId: string, changes: Partial<ITodoItem>) {
-        const entityId = Number.parseInt(itemId);
-        const entityChanges: Partial<TodoItemEntity> = {
-            ...changes,
-            id: undefined,
-            parentId: changes.parentId ? Number.parseInt(changes.parentId) : undefined
-        };
-        return this._externalApi.updateTodoItem(entityId, entityChanges);
     }
 }
