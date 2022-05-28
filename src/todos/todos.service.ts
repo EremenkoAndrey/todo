@@ -2,7 +2,7 @@ import { TodoList, TodoListEntity } from '../core/indexed-db';
 
 import { TodoDto } from './todo.dto';
 import { ONE_DAY_IN_MILLISECOND } from './constants';
-import { TodoSource } from './types';
+import { TodoBlank } from './types';
 
 interface IExternalApi {
     getTodoList: (timestamp: number, limit?: number) => Promise<TodoList[]>;
@@ -12,12 +12,12 @@ interface IExternalApi {
 export class TodosService {
     constructor(private _externalApi: IExternalApi) {}
 
-    public async getInitialTodos() {
-        const todoLists = await this._externalApi.getTodoList(Date.now() - ONE_DAY_IN_MILLISECOND, 3);
+    public async getInitialTodos(limit: number) {
+        const todoLists = await this._externalApi.getTodoList(Date.now() - 3 * ONE_DAY_IN_MILLISECOND, limit);
         return todoLists.map(todoListEntity => TodoDto.create(todoListEntity));
     }
 
-    public async addTodoList(items: TodoSource[]) {
+    public async addTodoList(items: TodoBlank[]) {
         const entities = items.map(todo => ({
             title: todo.title,
             timestamp: todo.date.valueOf()

@@ -7,4 +7,4 @@ export interface ITodo {
     items: Array<ITodoItem>;
 }
 
-export type TodoSource = Omit<ITodo, 'id' | 'items'>;
+export type TodoBlank = Omit<ITodo, 'id' | 'items'>;

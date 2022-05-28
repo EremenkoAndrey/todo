@@ -2,11 +2,11 @@ import { makeAutoObservable } from 'mobx';
 
 import { ONE_DAY_IN_MILLISECOND } from './constants';
 
-import { ITodo, TodoSource } from './types';
+import { ITodo, TodoBlank } from './types';
 
 interface ITodosService {
-    getInitialTodos(): Promise<ITodo[]>;
-    addTodoList(sources: TodoSource[]): Promise<ITodo[]>;
+    getInitialTodos(limit: number): Promise<ITodo[]>;
+    addTodoList(sources: TodoBlank[]): Promise<ITodo[]>;
 }
 
 export class TodosStore {
@@ -17,29 +17,50 @@ export class TodosStore {
     }
 
     public async initialize() {
-        this.todos = await this._todosService.getInitialTodos();
-        if (this.todos.length > 0) {
-            return this.todos;
+        const prevDaysAmount = 2;
+        const nextDaysAmount = 7;
+        const limit = prevDaysAmount + 1 + nextDaysAmount;
+        const existingTodos = await this._todosService.getInitialTodos(limit);
+        if (existingTodos.length === limit) {
+            this.todos = existingTodos;
+            return;
         }
-        const maxItemsAmount = 1;
-        const newTodos: TodoSource[] = [];
-        for (let i = 0; i < maxItemsAmount; i += 1) {
-            const todoItem = this._createTodoSource(newTodos[i - 1]);
-            newTodos.push(todoItem);
+        const nowDate = new Date();
+
+        function getDate(egoDaysAmount: number) {
+            if (egoDaysAmount === 0) {
+                return new Date();
+            }
+            const daysInMs = Math.abs(egoDaysAmount) * ONE_DAY_IN_MILLISECOND;
+            if (egoDaysAmount < 0) {
+                return new Date(nowDate.valueOf() - daysInMs);
+            }
+            return new Date(nowDate.valueOf() + daysInMs);
         }
-        this.todos = await this._todosService.addTodoList(newTodos);
-    }
 
-    private _createTodoSource(lastItem?: TodoSource): TodoSource {
-        const date = lastItem ? this._addDay(lastItem.date) : new Date();
-        const title = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
-        return {
-            title,
-            date
-        };
-    }
+        function createTodoBlank(date: Date): TodoBlank {
+            const title = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+            return {
+                title,
+                date
+            };
+        }
 
-    private _addDay(date: Date) {
-        return new Date(date.valueOf() + ONE_DAY_IN_MILLISECOND);
+        const daysSet = new Set<string>();
+        const getUniqueKeyOfTheDay = (date: Date) => `${date.getDate()}${date.getMonth()}${date.getFullYear()}`;
+        existingTodos.forEach((todo) => {
+            daysSet.add(getUniqueKeyOfTheDay(todo.date));
+        });
+        const blanks: Array<TodoBlank> = [];
+        for (let i = 0; i < limit; i += 1) {
+            const date = getDate(i - prevDaysAmount);
+            if (!daysSet.has(getUniqueKeyOfTheDay(date))) {
+                const blank = createTodoBlank(date);
+                blanks.push(blank);
+            }
+        }
+        const newTodos = await this._todosService.addTodoList(blanks);
+        this.todos = [...existingTodos, ...newTodos].sort((a, b) => a.date.valueOf() - b.date.valueOf());
+        console.log('this.todos', this.todos);
     }
 }
